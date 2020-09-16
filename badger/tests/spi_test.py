@@ -123,7 +123,7 @@ def do_message(s, p, verbose=False):
 # Read Manufacturer ID, JEDEC ID and Device ID
 def read_id(s):
     logging.info('Reading ID...')
-    p = READ_STATUS_1 + READ_STATUS_2 + READ_STATUS_1 + READ_JEDEC_ID + READ_DEVICE_ID
+    p = READ_STATUS + READ_CONFIG_REG + READ_STATUS + READ_JEDEC_ID + READ_DEVICE_ID
     r, addr = do_message(s, p, verbose=False)
     manu_id = r[len(r) - 2]
     dev_id = r[len(r) - 1]
@@ -154,8 +154,6 @@ def read_status(s):
 def erase_mem(s, ad, size):
     if size == 'SECTOR':
         p = ERASE_SECTOR
-    elif size == '32KB':
-        p = ERASE_BLOCK_32
     elif size == '64KB':
         p = ERASE_BLOCK_64
     else:
@@ -213,14 +211,6 @@ def page_read(s, ad, fast=False, otp=False):
         logging.warning('length error %d reading address %d\n' % (len(r), ad))
     block = r[-256:]
     return block
-
-
-# Clifford's spiflash.v simulation of a W25Q128JV needs to hear this command
-# before it will run normal commands
-def power_up(s):
-    p = RELEASE_PD
-    r, addr = do_message(s, p)
-    return
 
 
 # Needed after an attempt to erase or program a write-protected block
@@ -379,7 +369,6 @@ def main():
                         help='Read SPI flash chip identification and status')
     parser.add_argument('--erase', type=lambda x: int(x,0),
                         help='Number of 256-byte sectors to erase')
-    parser.add_argument('--power', action='store_true', help='power up the flash chip')
     parser.add_argument('--program', type=str, help='File to be stored in SPI Flash')
     parser.add_argument('--dump', type=str, help='Dump flash memory contents into file')
     parser.add_argument('--wait', default=0.001, type=float,
@@ -418,9 +407,6 @@ def main():
 
     if args.pages is not None:
         page_count = args.pages
-
-    if args.power:
-        power_up(sock)
 
     if args.dump is not None:
         flash_dump(sock, args.dump, ad, page_count, otp=args.otp)
