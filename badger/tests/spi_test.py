@@ -36,27 +36,24 @@ def hexfromba(ba):
 MSG_PREFIX     = bafromhex(b'5201')            # 52 01
 CHK_PREFIX     = bafromhex(b'5200')            # 52 00
 
-# instruction set
-RELEASE_PD     = bafromhex(b'01ab')            # 01 ab              Release Power Down
-READ_STATUS_1  = bafromhex(b'020500')          # 05 dd              Read Status Register
-READ_STATUS_2  = bafromhex(b'023500')
-READ_JEDEC_ID  = bafromhex(b'049f000000')      # 9F dd dd dd        Read JEDEC ID
-READ_DEVICE_ID = bafromhex(b'06900000000000')  # 90 00 00 00 dd dd  Read Device ID
+# S25FL128S instruction set
+READ_STATUS     = bafromhex(b'020500')         # 05 dd              Read Status Register
+READ_JEDEC_ID   = bafromhex(b'049f000000')     # 9F dd dd dd        Read JEDEC ID
+READ_DEVICE_ID  = bafromhex(b'06900000000000') # 90 00 00 00 dd dd  Read Device ID
 READ_CONFIG_REG = bafromhex(b'023500')         # 35 dd              Read Configuration Register
-CLEAR_STATUS   = bafromhex(b'0130')            # 30                 Clear Status Register
-RESET_CHIP     = bafromhex(b'01f0')            # f0                 Software reset
+CLEAR_STATUS    = bafromhex(b'0130')           # 30                 Clear Status Register
+RESET_CHIP      = bafromhex(b'01f0')           # f0                 Software reset
 
-ERASE_SECTOR   = bafromhex(b'0420')            # 20 nn nn nn        Erase Sector (4kB)
-ERASE_BLOCK_32 = bafromhex(b'0452')            # 52 nn nn nn        Erase Block  (32kB)
-ERASE_BLOCK_64 = bafromhex(b'04d8')            # d8 nn nn nn        Erase Block  (64kB)
-READ_FAST      = bafromhex(b'0d0b')            # 0b nn nn nn        Fast Read (261 bytes)
-READ_DATA      = bafromhex(b'0c03')            # 03 nn nn nn        Read Data (260 bytes)
-PAGE_PROG      = bafromhex(b'0c02')            # 02 nn nn nn dd     Page program (260 bytes)
-WRITE_DISABLE  = bafromhex(b'0104')            # 04                 Write Disaable
-WRITE_ENABLE   = bafromhex(b'0106')            # 06                 Write Enable
-WRITE_STATUS   = bafromhex(b'0201')            # 01 dd              Write Status Register
-WRITE_CONFIG   = bafromhex(b'0301')            # 01 dd dd           Write Status and Config
-READ_OTP       = bafromhex(b'0d4b')            # 4b nn nn nn        Like Fast Read (261 bytes)
+ERASE_SECTOR    = bafromhex(b'0420')           # 20 nn nn nn        Erase Sector (4kB)
+ERASE_BLOCK_64  = bafromhex(b'04d8')           # d8 nn nn nn        Erase Block  (64kB)
+READ_FAST       = bafromhex(b'0d0b')           # 0b nn nn nn        Fast Read (261 bytes)
+READ_DATA       = bafromhex(b'0c03')           # 03 nn nn nn        Read Data (260 bytes)
+PAGE_PROG       = bafromhex(b'0c02')           # 02 nn nn nn dd     Page program (260 bytes)
+WRITE_DISABLE   = bafromhex(b'0104')           # 04                 Write Disable
+WRITE_ENABLE    = bafromhex(b'0106')           # 06                 Write Enable
+WRITE_STATUS    = bafromhex(b'0201')           # 01 dd              Write Status Register
+WRITE_CONFIG    = bafromhex(b'0301')           # 01 dd dd           Write Status and Config
+READ_OTP        = bafromhex(b'0d4b')           # 4b nn nn nn        Like Fast Read (261 bytes)
 
 # ICAP_SPARTAN6 commands
 # UG380 table 7-1
