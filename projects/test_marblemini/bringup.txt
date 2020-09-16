@@ -28,20 +28,30 @@ hexdump -e '16/1 "%02x" "\n"' /tmp/sno.dat | head -n 1
 # BP[2]  is SR1[4]  set to 1
 # BP[1]  is SR1[3]  set to 0
 # BP[0]  is SR1[2]  set to 1
-python3 spi_test.py --ip=$IP --status_write 0x94 --config_write 0x24
+
+# Here we set OTP bits
+# But leave SRWD and BP bits unasserted
+# This way we can program irrespective of SW1 position
+python3 spi_test.py --ip=$IP --status_write 0x00 --config_write 0x24
 python3 spi_test.py --ip=$IP --id
-# comes back 24, 94
+# comes back 24, 00
 # Manufacturer ID: 01
 # Device ID:       17
 # Memory Type:     20
 # Capacity:        18
 # CONFIG_REG = 24
-# INFO:Check Status Reg: 94
+# INFO:Check Status Reg: 00
 
-# Only after all the CR1 OTP bits are set the way I want,
+Now, after a power cycle we program gold and prod bitfiles
 cd ../../..
 BITFILE=~/hack/marble/marble1_17.bit ./mutil gold
 BITFILE=~/hack/marble/marble1_18.bit ./mutil prod
+
+# after programming we now set 
+python3 spi_test.py --ip=$IP --status_write 0x94
+# which now leaves us in a write protected state
+# based on the position of SW1
+
 # power-cycle, should boot quickly to 192.168.19.17
 ping -c 2 $IP
 ./mutil reboot

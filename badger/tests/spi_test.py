@@ -36,27 +36,24 @@ def hexfromba(ba):
 MSG_PREFIX     = bafromhex(b'5201')            # 52 01
 CHK_PREFIX     = bafromhex(b'5200')            # 52 00
 
-# instruction set
-RELEASE_PD     = bafromhex(b'01ab')            # 01 ab              Release Power Down
-READ_STATUS_1  = bafromhex(b'020500')          # 05 dd              Read Status Register
-READ_STATUS_2  = bafromhex(b'023500')
-READ_JEDEC_ID  = bafromhex(b'049f000000')      # 9F dd dd dd        Read JEDEC ID
-READ_DEVICE_ID = bafromhex(b'06900000000000')  # 90 00 00 00 dd dd  Read Device ID
+# S25FL128S instruction set
+READ_STATUS     = bafromhex(b'020500')         # 05 dd              Read Status Register
+READ_JEDEC_ID   = bafromhex(b'049f000000')     # 9F dd dd dd        Read JEDEC ID
+READ_DEVICE_ID  = bafromhex(b'06900000000000') # 90 00 00 00 dd dd  Read Device ID
 READ_CONFIG_REG = bafromhex(b'023500')         # 35 dd              Read Configuration Register
-CLEAR_STATUS   = bafromhex(b'0130')            # 30                 Clear Status Register
-RESET_CHIP     = bafromhex(b'01f0')            # f0                 Software reset
+CLEAR_STATUS    = bafromhex(b'0130')           # 30                 Clear Status Register
+RESET_CHIP      = bafromhex(b'01f0')           # f0                 Software reset
 
-ERASE_SECTOR   = bafromhex(b'0420')            # 20 nn nn nn        Erase Sector (4kB)
-ERASE_BLOCK_32 = bafromhex(b'0452')            # 52 nn nn nn        Erase Block  (32kB)
-ERASE_BLOCK_64 = bafromhex(b'04d8')            # d8 nn nn nn        Erase Block  (64kB)
-READ_FAST      = bafromhex(b'0d0b')            # 0b nn nn nn        Fast Read (261 bytes)
-READ_DATA      = bafromhex(b'0c03')            # 03 nn nn nn        Read Data (260 bytes)
-PAGE_PROG      = bafromhex(b'0c02')            # 02 nn nn nn dd     Page program (260 bytes)
-WRITE_DISABLE  = bafromhex(b'0104')            # 04                 Write Disaable
-WRITE_ENABLE   = bafromhex(b'0106')            # 06                 Write Enable
-WRITE_STATUS   = bafromhex(b'0201')            # 01 dd              Write Status Register
-WRITE_CONFIG   = bafromhex(b'0301')            # 01 dd dd           Write Status and Config
-READ_OTP       = bafromhex(b'0d4b')            # 4b nn nn nn        Like Fast Read (261 bytes)
+ERASE_SECTOR    = bafromhex(b'0420')           # 20 nn nn nn        Erase Sector (4kB)
+ERASE_BLOCK_64  = bafromhex(b'04d8')           # d8 nn nn nn        Erase Block  (64kB)
+READ_FAST       = bafromhex(b'0d0b')           # 0b nn nn nn        Fast Read (261 bytes)
+READ_DATA       = bafromhex(b'0c03')           # 03 nn nn nn        Read Data (260 bytes)
+PAGE_PROG       = bafromhex(b'0c02')           # 02 nn nn nn dd     Page program (260 bytes)
+WRITE_DISABLE   = bafromhex(b'0104')           # 04                 Write Disable
+WRITE_ENABLE    = bafromhex(b'0106')           # 06                 Write Enable
+WRITE_STATUS    = bafromhex(b'0201')           # 01 dd              Write Status Register
+WRITE_CONFIG    = bafromhex(b'0301')           # 01 dd dd           Write Status and Config
+READ_OTP        = bafromhex(b'0d4b')           # 4b nn nn nn        Like Fast Read (261 bytes)
 
 # ICAP_SPARTAN6 commands
 # UG380 table 7-1
@@ -126,7 +123,7 @@ def do_message(s, p, verbose=False):
 # Read Manufacturer ID, JEDEC ID and Device ID
 def read_id(s):
     logging.info('Reading ID...')
-    p = READ_STATUS_1 + READ_STATUS_2 + READ_STATUS_1 + READ_JEDEC_ID + READ_DEVICE_ID
+    p = READ_STATUS + READ_CONFIG_REG + READ_STATUS + READ_JEDEC_ID + READ_DEVICE_ID
     r, addr = do_message(s, p, verbose=False)
     manu_id = r[len(r) - 2]
     dev_id = r[len(r) - 1]
@@ -142,10 +139,10 @@ def read_id(s):
 
 # Read status reg 1, twice for good measure
 def read_status(s):
-    p = READ_CONFIG_REG + 2 * READ_STATUS_1
+    p = READ_CONFIG_REG + 2 * READ_STATUS
     r, addr = do_message(s, p, verbose=False)
     status_reg = r[len(r) - 1]
-    config_reg = r[len(r) - 1 - 2*len(READ_STATUS_1)]
+    config_reg = r[len(r) - 1 - 2*len(READ_STATUS)]
     print("CONFIG_REG = %x" % config_reg)
     logging.debug('From: %s \n Tx length: %d\n Rx length: %d\n' % (addr, len(p), len(r)))
     logging.info('Check Status Reg: %02x' % status_reg)
@@ -157,14 +154,12 @@ def read_status(s):
 def erase_mem(s, ad, size):
     if size == 'SECTOR':
         p = ERASE_SECTOR
-    elif size == '32KB':
-        p = ERASE_BLOCK_32
     elif size == '64KB':
         p = ERASE_BLOCK_64
     else:
         logging.error('Wrong buffer size to erase.')
     logging.info('Erasing %s at address 0x%x...' % (size, ad))
-    pp = p + three_bytes(ad) + 5 * READ_STATUS_1
+    pp = p + three_bytes(ad) + 5 * READ_STATUS
     r, addr = do_message(s, pp)
     status_reg = r[-1]
     logging.debug('From: %s \n Tx length: %d\n Rx length: %d\n' % (addr, len(pp), len(r)))
@@ -181,7 +176,7 @@ def write_enable(s, enable):
     else:
         p = WRITE_DISABLE
         logging.debug('Disabling Write Register')
-    pp = p + 6 * READ_STATUS_1
+    pp = p + 6 * READ_STATUS
     r, addr = do_message(s, pp)
     status_reg = r[-1]
     logging.debug('From: %s \n Tx length: %d\n Rx length: %d\n' % (addr, len(pp), len(r)))
@@ -216,14 +211,6 @@ def page_read(s, ad, fast=False, otp=False):
         logging.warning('length error %d reading address %d\n' % (len(r), ad))
     block = r[-256:]
     return block
-
-
-# Clifford's spiflash.v simulation of a W25Q128JV needs to hear this command
-# before it will run normal commands
-def power_up(s):
-    p = RELEASE_PD
-    r, addr = do_message(s, p)
-    return
 
 
 # Needed after an attempt to erase or program a write-protected block
@@ -264,7 +251,7 @@ def write_status(s, v, config=None):
         p = WRITE_ENABLE + WRITE_STATUS + bytes([v])
     else:
         p = WRITE_ENABLE + WRITE_CONFIG + bytes([v, config])
-    pp = p + 7 * READ_STATUS_1
+    pp = p + 7 * READ_STATUS
     logging.info('Write Status')
     r, addr = do_message(s, pp, verbose=True)
 
@@ -382,7 +369,6 @@ def main():
                         help='Read SPI flash chip identification and status')
     parser.add_argument('--erase', type=lambda x: int(x,0),
                         help='Number of 256-byte sectors to erase')
-    parser.add_argument('--power', action='store_true', help='power up the flash chip')
     parser.add_argument('--program', type=str, help='File to be stored in SPI Flash')
     parser.add_argument('--dump', type=str, help='Dump flash memory contents into file')
     parser.add_argument('--wait', default=0.001, type=float,
@@ -421,9 +407,6 @@ def main():
 
     if args.pages is not None:
         page_count = args.pages
-
-    if args.power:
-        power_up(sock)
 
     if args.dump is not None:
         flash_dump(sock, args.dump, ad, page_count, otp=args.otp)
