@@ -88,7 +88,7 @@ def byterev(n):
     return (mapper[lnib] + mapper[unib]).decode('hex')
 
 
-def do_message(s, p, verbose=False):
+def do_message(s, p, verbose=True):
     pp = MSG_PREFIX + bytearray(p)
     if verbose:
         print("sending  " + hexfromba(pp))
@@ -124,7 +124,7 @@ def do_message(s, p, verbose=False):
 def read_id(s):
     logging.info('Reading ID...')
     p = READ_STATUS + READ_CONFIG_REG + READ_STATUS + READ_JEDEC_ID + READ_DEVICE_ID
-    r, addr = do_message(s, p, verbose=False)
+    r, addr = do_message(s, p)
     manu_id = r[len(r) - 2]
     dev_id = r[len(r) - 1]
     capacity = r[len(r) - 8]
@@ -140,7 +140,7 @@ def read_id(s):
 # Read status reg 1, twice for good measure
 def read_status(s):
     p = READ_CONFIG_REG + 2 * READ_STATUS_1
-    r, addr = do_message(s, p, verbose=False)
+    r, addr = do_message(s, p)
     status_reg = r[len(r) - 1]
     config_reg = r[len(r) - 1 - 2*len(READ_STATUS_1)]
     print("CONFIG_REG = %x" % config_reg)
@@ -253,7 +253,7 @@ def write_status(s, v, config=None):
         p = WRITE_ENABLE + WRITE_CONFIG + bytes([v, config])
     pp = p + 7 * READ_STATUS_1
     logging.info('Write Status')
-    r, addr = do_message(s, pp, verbose=True)
+    r, addr = do_message(s, pp)
 
 
 # Read flash content and dump
@@ -386,8 +386,8 @@ def main():
                         help='Reboot chip using Xilinx 7-Series ICAPE2 primitive')
     args = parser.parse_args()
 
-    # numeric_level = getattr(logging, "DEBUG", None)
-    # logging.basicConfig(level=numeric_level)
+    numeric_level = getattr(logging, "DEBUG", None)
+    logging.basicConfig(level=numeric_level)
 
     global IPADDR, PORTNUM, WAIT
     IPADDR, PORTNUM, WAIT = args.ip, args.udp, args.wait
