@@ -139,10 +139,10 @@ def read_id(s):
 
 # Read status reg 1, twice for good measure
 def read_status(s):
-    p = READ_CONFIG_REG + 2 * READ_STATUS_1
+    p = READ_CONFIG_REG + 2 * READ_STATUS
     r, addr = do_message(s, p)
     status_reg = r[len(r) - 1]
-    config_reg = r[len(r) - 1 - 2*len(READ_STATUS_1)]
+    config_reg = r[len(r) - 1 - 2*len(READ_STATUS)]
     print("CONFIG_REG = %x" % config_reg)
     logging.debug('From: %s \n Tx length: %d\n Rx length: %d\n' % (addr, len(p), len(r)))
     logging.info('Check Status Reg: %02x' % status_reg)
