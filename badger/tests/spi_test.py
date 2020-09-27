@@ -159,7 +159,7 @@ def erase_mem(s, ad, size):
     else:
         logging.error('Wrong buffer size to erase.')
     logging.info('Erasing %s at address 0x%x...' % (size, ad))
-    pp = p + three_bytes(ad) + 5 * READ_STATUS_1
+    pp = p + three_bytes(ad) + 5 * READ_STATUS
     r, addr = do_message(s, pp)
     status_reg = r[-1]
     logging.debug('From: %s \n Tx length: %d\n Rx length: %d\n' % (addr, len(pp), len(r)))
@@ -176,7 +176,7 @@ def write_enable(s, enable):
     else:
         p = WRITE_DISABLE
         logging.debug('Disabling Write Register')
-    pp = p + 6 * READ_STATUS_1
+    pp = p + 6 * READ_STATUS
     r, addr = do_message(s, pp)
     status_reg = r[-1]
     logging.debug('From: %s \n Tx length: %d\n Rx length: %d\n' % (addr, len(pp), len(r)))
@@ -251,7 +251,7 @@ def write_status(s, v, config=None):
         p = WRITE_ENABLE + WRITE_STATUS + bytes([v])
     else:
         p = WRITE_ENABLE + WRITE_CONFIG + bytes([v, config])
-    pp = p + 7 * READ_STATUS_1
+    pp = p + 7 * READ_STATUS
     logging.info('Write Status')
     r, addr = do_message(s, pp)
 
