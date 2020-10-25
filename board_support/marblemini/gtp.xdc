@@ -1,0 +1,25 @@
+set_property CONFIG_VOLTAGE  3.3 [current_design]
+set_property CFGBVS VCCO [current_design]
+
+set_property -dict {PACKAGE_PIN C18 IOSTANDARD LVCMOS33} [get_ports {LED[0]}]
+set_property -dict {PACKAGE_PIN D22 IOSTANDARD LVCMOS33} [get_ports {LED[1]}]
+set_property -dict {PACKAGE_PIN E22 IOSTANDARD LVCMOS33} [get_ports {LED[2]}]
+set_property -dict {PACKAGE_PIN G21 IOSTANDARD LVCMOS33} [get_ports {LED[3]}]
+set_property -dict {PACKAGE_PIN D21 IOSTANDARD LVCMOS33} [get_ports Pmod1_4]
+set_property -dict {PACKAGE_PIN E21 IOSTANDARD LVCMOS33} [get_ports Pmod1_5]
+set_property -dict {PACKAGE_PIN F21 IOSTANDARD LVCMOS33} [get_ports Pmod1_6]
+set_property -dict {PACKAGE_PIN G22 IOSTANDARD LVCMOS33} [get_ports Pmod1_7]
+
+set_property -dict {PACKAGE_PIN D17 IOSTANDARD LVCMOS33} [get_ports CLK20_VCXO]
+create_clock -name sys_clk_fast -period 50.0 [get_ports CLK20_VCXO]
+set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports VCXO_EN]
+
+set_property -dict {PACKAGE_PIN E6 IOSTANDARD DIFF_SSTL15} [get_ports MGTREFCLK0_N]
+set_property -dict {PACKAGE_PIN F6 IOSTANDARD DIFF_SSTL15} [get_ports MGTREFCLK0_P]
+set_property -dict {PACKAGE_PIN E10 IOSTANDARD DIFF_SSTL15} [get_ports MGTREFCLK1_N]
+set_property -dict {PACKAGE_PIN F10 IOSTANDARD DIFF_SSTL15} [get_ports MGTREFCLK1_P]
+
+set_property -dict {PACKAGE_PIN A4 IOSTANDARD DIFF_SSTL15} [get_ports SFP_TXN]
+set_property -dict {PACKAGE_PIN B4 IOSTANDARD DIFF_SSTL15} [get_ports SFP_TXP]
+set_property -dict {PACKAGE_PIN A8 IOSTANDARD DIFF_SSTL15} [get_ports SFP_RXN]
+set_property -dict {PACKAGE_PIN B8 IOSTANDARD DIFF_SSTL15} [get_ports SFP_RXP]
