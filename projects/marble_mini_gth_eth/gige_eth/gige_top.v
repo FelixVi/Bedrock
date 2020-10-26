@@ -40,7 +40,7 @@ module gige_top
    wire gt0_tx_usr_clk, gt0_rx_usr_clk;
    wire tx0_pll_lock, rx0_pll_lock;
 
-   BUFG sysclk_bufg(.I(CLK20_VCXO), .O(sys_clk_fast));
+   //~ BUFG sysclk_bufg(.I(CLK20_VCXO), .O(sys_clk_fast));
    // Generate single clock from differential system clk
    //~ ds_clk_buf i_ds_sys_clk (
       //~ .clk_p   (SYS_CLK_P),
