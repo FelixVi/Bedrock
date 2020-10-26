@@ -20,7 +20,8 @@ module gige_top
    output  SFP_TXP,
    output  SFP_TXN,
 
-   output [3:0] LED
+   output [3:0] LED,
+   output  VCXO_EN
 );
 
 `include "comms_features.vh"
@@ -252,6 +253,9 @@ wire [31:0] ctr_mem_out;
                  heartbeat,
                  lbus_led,
                  an_status[0]};
+
+   assign sys_clk_fast = CLK20_VCXO;
+   assign VCXO_EN = 1'b1;
 
 endmodule
 
