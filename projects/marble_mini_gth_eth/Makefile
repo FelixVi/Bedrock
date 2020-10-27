@@ -35,5 +35,5 @@ ifneq (,$(findstring bit,$(MAKECMDGOALS)))
     endif
 endif
 
-CLEAN += *.bit ../test/*.dat
+CLEAN += *.bit ../test/*.dat gige_top.bin gige_top.prm
 include $(BUILD_DIR)/bottom_rules.mk
