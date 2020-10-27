@@ -8,7 +8,7 @@
 #
 ###############################
 
-set MGT_CONFIG_DIR "../../../fpga_family/mgt"
+set MGT_CONFIG_DIR "../../fpga_family/mgt"
 source $MGT_CONFIG_DIR/mgt_gen.tcl
 
 

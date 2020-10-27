@@ -1,9 +1,9 @@
-include ../../../dir_list.mk
+include ../../dir_list.mk
 
 HARDWARE = marblemini
 COMMUNICATION = gtp
 
-COMMS_TOP_DIR = ../
+COMMS_TOP_DIR = .
 
 APP_NAME = gige_top
 IP_TCL = gtp_gige_top.tcl
